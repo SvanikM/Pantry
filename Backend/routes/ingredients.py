@@ -5,7 +5,7 @@ from schemas import IngredientUpdate
 
 router = APIRouter()
 
-@router.post("/ingredients/create")
+@router.post("/ingredients")
 def add_ingredient(ingredient: IngredientCreate):
     mydb = get_db()
     cursor = mydb.cursor()
@@ -31,7 +31,7 @@ def add_ingredient(ingredient: IngredientCreate):
 
     return {"message": "Ingredient added successfully"}
 
-@router.post("/ingredients/update")
+@router.patch("/ingredients")
 def update_ingredient(ingredient: IngredientUpdate):
     mydb = get_db()
     cursor = mydb.cursor()
@@ -59,3 +59,35 @@ def update_ingredient(ingredient: IngredientUpdate):
 
     return {"message": "Ingredient updated successfully"}
 
+@router.get("/ingredients")
+def get_ingredients(email: str, username: str, item: str):
+    mydb = get_db()
+    cursor = mydb.cursor()
+    query = """
+    SELECT IngredientName, IngredientQuantity, IngredientUnit
+    FROM ingredients
+    WHERE UserName = %s AND Email = %s and IngredientName = %s
+    """
+    values = (username, email, item)
+    cursor.execute(query, values)
+    ingredients = cursor.fetchall()
+    cursor.close()
+    mydb.close()
+    return ingredients
+
+@router.delete("/ingredients")
+def delete_ingredients(email: str, username: str, item: str):
+    mydb = get_db()
+    cursor = mydb.cursor()
+    query = """
+    DELETE FROM ingredients
+    WHERE UserName = %s AND Email = %s AND IngredientName = %s
+    """
+    values = (username, email, item)
+    cursor.execute(query, values)
+    mydb.commit()
+    cursor.close()
+    mydb.close()
+    return {"message": "Ingredient deleted successfully"}
+            
+    
