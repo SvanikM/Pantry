@@ -24,6 +24,8 @@ def add_ingredient(ingredient: IngredientCreate):
     )
 
     cursor.execute(query, values)
+    if cursor.rowcount == 0:
+        return {"message": "Failed to add ingredient"}
     mydb.commit()
 
     cursor.close()
@@ -52,6 +54,8 @@ def update_ingredient(ingredient: IngredientUpdate):
     )
 
     cursor.execute(query, values)
+    if cursor.rowcount == 0:
+        return {"message": "Ingredient not found"}
     mydb.commit()
 
     cursor.close()
@@ -70,6 +74,8 @@ def get_ingredients(email: str, username: str, item: str):
     """
     values = (username, email, item)
     cursor.execute(query, values)
+    if cursor.rowcount == 0:
+        return {"message": "Ingredient not found"}
     ingredients = cursor.fetchall()
     cursor.close()
     mydb.close()
@@ -85,6 +91,8 @@ def delete_ingredients(email: str, username: str, item: str):
     """
     values = (username, email, item)
     cursor.execute(query, values)
+    if cursor.rowcount == 0:
+        return {"message": "Ingredient not found"}
     mydb.commit()
     cursor.close()
     mydb.close()
