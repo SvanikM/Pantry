@@ -22,9 +22,46 @@ def add_user(user: UserCreate):
     )
 
     cursor.execute(query, values)
+    if cursor.rowcount == 0:
+        return {"message": "Failed to add user"}
     mydb.commit()
 
     cursor.close()
     mydb.close()
 
-    return {"message": "Ingredient added successfully"}
+    return {"message": "User added successfully"}
+
+@router.get("/users")
+def get_user(username: str, email: str):
+    mydb = get_db()
+    cursor = mydb.cursor()
+    query = """
+    SELECT UserName, Email 
+    FROM users
+    WHERE UserName = %s AND Email = %s
+    """
+    values = (username, email)
+    cursor.execute(query, values)
+    if cursor.rowcount == 0:
+        return {"message": "User not found"}
+    user = cursor.fetchone()
+    cursor.close()
+    mydb.close()
+    return {"users": user}
+
+@router.delete("/users")
+def delete_user(username: str, email: str):
+    mydb = get_db()
+    cursor = mydb.cursor()
+    query = """
+    DELETE FROM users
+    WHERE UserName = %s AND Email = %s
+    """
+    values = (username, email)
+    cursor.execute(query, values)
+    if cursor.rowcount == 0:
+        return {"message": "User not found"}
+    mydb.commit()
+    cursor.close()
+    mydb.close()
+    return {"message": "User deleted successfully"}
