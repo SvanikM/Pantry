@@ -1,7 +1,6 @@
 from fastapi import APIRouter
 from db import get_db
 from schemas import IngredientCreate
-from schemas import IngredientUpdate
 
 router = APIRouter()
 
@@ -34,24 +33,62 @@ def add_ingredient(ingredient: IngredientCreate):
     return {"message": "Ingredient added successfully"}
 
 @router.patch("/ingredients")
-def update_ingredient(ingredient: IngredientUpdate):
+def update_ingredient(username: str, email: str, item: str, quantity: int | None = None, unit: str | None = None):
     mydb = get_db()
     cursor = mydb.cursor()
 
-    query = """
-    UPDATE ingredients
-    SET IngredientQuantity = %s
-    WHERE UserName = %s
-    AND Email = %s
-    AND IngredientName = %s;
-    """
+    if quantity is None and unit is None:
+        return {"message": "No fields to update"}
+    #update quantity
+    elif quantity is not None and unit is None:
+        query = """
+        UPDATE ingredients
+        SET IngredientQuantity = %s
+        WHERE UserName = %s
+        AND Email = %s
+        AND IngredientName = %s;
+        """
 
-    values = (
-        ingredient.quantity,
-        ingredient.username,
-        ingredient.email,
-        ingredient.item
-    )
+        values = (
+            quantity,
+            username,
+            email,
+            item
+        )
+    #update unit
+    elif quantity is None and unit is not None:
+        query = """
+        UPDATE ingredients
+        SET IngredientUnit = %s
+        WHERE UserName = %s
+        AND Email = %s
+        AND IngredientName = %s;
+        """
+
+        values = (
+            unit,
+            username,
+            email,
+            item
+        )
+
+    #update quantity & unit
+    else:
+        query = """
+        UPDATE ingredients
+        SET IngredientQuantity = %s, IngredientUnit = %s
+        WHERE UserName = %s
+        AND Email = %s
+        AND IngredientName = %s;
+        """
+
+        values = (
+            quantity,
+            unit,
+            username,
+            email,
+            item
+        )
 
     cursor.execute(query, values)
     if cursor.rowcount == 0:
