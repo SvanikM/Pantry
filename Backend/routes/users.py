@@ -42,9 +42,9 @@ def get_user(username: str, email: str):
     """
     values = (username, email)
     cursor.execute(query, values)
+    user = cursor.fetchone()
     if cursor.rowcount == 0:
         return {"message": "User not found"}
-    user = cursor.fetchone()
     cursor.close()
     mydb.close()
     return {"users": user}

@@ -63,20 +63,30 @@ def update_ingredient(ingredient: IngredientUpdate):
 
     return {"message": "Ingredient updated successfully"}
 
+#accepts the following sort types: AlphabeticalAsc, AlphabeticalDesc, QuantityAsc, QuantityDesc
 @router.get("/ingredients")
-def get_ingredients(email: str, username: str, item: str):
+def get_ingredients(email: str, username: str, item: str, sort: str):
     mydb = get_db()
     cursor = mydb.cursor()
     query = """
     SELECT IngredientName, IngredientQuantity, IngredientUnit
     FROM ingredients
-    WHERE UserName = %s AND Email = %s and IngredientName = %s
+    WHERE UserName = %s AND Email = %s and IngredientName LIKE CONCAT('%', %s, '%')
     """
+    if sort == "AlphabeticalAsc":
+        query += " ORDER BY IngredientName ASC"
+    elif sort == "AlphabeticalDesc":
+        query += " ORDER BY IngredientName DESC"
+    elif sort == "QuantityAsc":
+        query += " ORDER BY IngredientQuantity ASC"
+    elif sort == "QuantityDesc":
+        query += " ORDER BY IngredientQuantity DESC"
+
     values = (username, email, item)
     cursor.execute(query, values)
+    ingredients = cursor.fetchall()
     if cursor.rowcount == 0:
         return {"message": "Ingredient not found"}
-    ingredients = cursor.fetchall()
     cursor.close()
     mydb.close()
     return ingredients

@@ -1,8 +1,8 @@
-CREATE DATABASE PantryDB;
+#CREATE DATABASE PantryDB;
 
-USE PantryDB;
+#USE PantryDB;
 
-DROP TABLE INGREDIENTS;
+DROP TABLE INGREDIENTS; 
 DROP TABLE USERS;
 
 #Allows a single user to create multiple accounts for separate kitchen/pantry locations

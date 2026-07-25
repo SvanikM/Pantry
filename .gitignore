@@ -1,2 +1,5 @@
 #has database password inside
 .env
+# Python cache
+__pycache__/
+*.pyc
