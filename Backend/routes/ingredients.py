@@ -39,6 +39,7 @@ def update_ingredient(username: str, email: str, item: str, quantity: int | None
 
     if quantity is None and unit is None:
         return {"message": "No fields to update"}
+    
     #update quantity
     elif quantity is not None and unit is None:
         query = """
@@ -55,6 +56,7 @@ def update_ingredient(username: str, email: str, item: str, quantity: int | None
             email,
             item
         )
+
     #update unit
     elif quantity is None and unit is not None:
         query = """
