@@ -32,15 +32,25 @@ def add_user(user: UserCreate):
     return {"message": "User added successfully"}
 
 @router.get("/users")
-def get_user(username: str, email: str):
+def get_user(username: str, email: str, password: str | None = None):
     mydb = get_db()
     cursor = mydb.cursor()
-    query = """
-    SELECT UserName, Email 
-    FROM users
-    WHERE UserName = %s AND Email = %s
+
+    if password is not None:
+        query = """
+        SELECT UserName, Email, Password
+        FROM users
+        WHERE UserName = %s AND Email = %s AND Password = %s
+        """
+        values = (username, email, password)
+    
+    elif password is None:
+        query = """
+        SELECT UserName, Email 
+        FROM users
+        WHERE UserName = %s AND Email = %s
     """
-    values = (username, email)
+        values = (username, email)
     cursor.execute(query, values)
     user = cursor.fetchone()
     if cursor.rowcount == 0:
