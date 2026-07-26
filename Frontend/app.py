@@ -14,17 +14,14 @@ PasswordInput = st.text_input("Enter your password:", type="password")
 LoginButton = st.button("Login")
 if LoginButton:
     response = requests.get(f"{FastAPI_URL}/users", params={"username": UserNameInput, "email": EmailInput})
-    if response.status_code == 200:
+    if response.status_code == 200 and response.json().get("message") != "User not found":
         user_data = response.json()
         passcheck = requests.get(f"{FastAPI_URL}/users", params={"username": UserNameInput, "email": EmailInput, "password": PasswordInput})
         user_pass_data = passcheck.json()
         if user_pass_data.get("message") == "User not found":
-           st.error("Incorrect Password")
-           print(user_data)
+           st.error("Incorrect Credentials")
         elif user_data.get("users"):
             st.success("Login successful!")
-        else:
-            st.error("User not found")
     else:
         st.error("Error logging in")
 
