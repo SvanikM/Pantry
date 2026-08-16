@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+import pandas as pd
 
 # Allows streamlit frontend to interact with the backend via fastapi endpoints
 FastAPI_URL = "http://localhost:8000"
@@ -59,5 +60,24 @@ if ("username" not in st.session_state) or ("email" not in st.session_state):
                 st.rerun()
         else:
             st.error("Error logging in")
-elif("email" in st.session_state or "username" in st.session_state):
-    st.write("ur in")
+elif("email" in st.session_state and "username" in st.session_state):
+    #autofill queries using session state user info
+    table = requests.get(
+        f"{FastAPI_URL}/ingredients",
+        params={
+            "username": st.session_state["username"],
+            "email": st.session_state["email"],
+            "item": "",
+            "sort": "AlphabeticalAsc",
+        },
+    )
+
+    if table.status_code == 200:
+        data = table.json()
+        if data:
+            df = pd.DataFrame(data)
+            df.columns = ["Name", "Quantity", "Unit"]
+            st.dataframe(df)
+        #query didnt work
+        else:
+            st.write("No ingredients found.")
