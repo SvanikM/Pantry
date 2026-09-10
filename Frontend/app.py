@@ -5,8 +5,7 @@ import pandas as pd
 # Allows streamlit frontend to interact with the backend via fastapi endpoints
 FastAPI_URL = "http://localhost:8000"
 
-st.title("Pantry App")
-st.write("Welcome to the Pantry App!")
+st.title("Pantry")
 
 # User info not in session state -> open login page
 if ("username" not in st.session_state) or ("email" not in st.session_state):
