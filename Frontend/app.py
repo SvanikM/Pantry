@@ -60,6 +60,8 @@ if ("username" not in st.session_state) or ("email" not in st.session_state):
                 st.rerun()
         else:
             st.error("Error logging in")
+
+#main page
 elif("email" in st.session_state and "username" in st.session_state):
     #autofill queries using session state user info
     table = requests.get(
@@ -77,7 +79,12 @@ elif("email" in st.session_state and "username" in st.session_state):
         if data:
             df = pd.DataFrame(data)
             df.columns = ["Name", "Quantity", "Unit"]
-            st.dataframe(df)
+            editor = st.data_editor(df, num_rows="dynamic", key="edits")
+            changes = st.session_state["edits"]
+            for row_index, changes_for_row in changes["edited_rows"].items():
+                ingredient = df.iloc[row_index]["Ingredient"]
+                st.write("Update:", ingredient, changes_for_row)
+
         #query didnt work
         else:
             st.write("No ingredients found.")
