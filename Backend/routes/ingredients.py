@@ -1,11 +1,11 @@
 from fastapi import APIRouter
-from db import get_db
-from schemas import IngredientCreate
+from ingredient_db import get_db
+from schemas import Ingredient
 
 router = APIRouter()
 
 @router.post("/ingredients")
-def add_ingredient(ingredient: IngredientCreate):
+def add_ingredient(ingredient: Ingredient, username: str, email: str):
     mydb = get_db()
     cursor = mydb.cursor()
 
@@ -15,8 +15,8 @@ def add_ingredient(ingredient: IngredientCreate):
     """
 
     values = (
-        ingredient.username,
-        ingredient.email,
+        username,
+        email,
         ingredient.item,
         ingredient.quantity,
         ingredient.unit

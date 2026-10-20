@@ -1,8 +1,6 @@
 from pydantic import BaseModel
 
-class IngredientCreate(BaseModel):
-    username:str
-    email:str
+class Ingredient(BaseModel):
     item: str
     quantity: int
     unit: str | None = None

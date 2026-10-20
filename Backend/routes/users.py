@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from db import get_db
+from ingredient_db import get_db
 from schemas import UserCreate
 
 
