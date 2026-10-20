@@ -1,12 +1,12 @@
 from fastapi import APIRouter
 from ingredient_db import get_db
-from schemas import UserCreate
+from schemas import UserObject
 
 
 router = APIRouter()
 
 @router.post("/users")
-def add_user(user: UserCreate):
+def add_user(user: UserObject):
     mydb = get_db()
     cursor = mydb.cursor()
 
