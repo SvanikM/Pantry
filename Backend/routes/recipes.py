@@ -1,10 +1,12 @@
 import os
 from dotenv import load_dotenv
-import pymongo
+from pymongo import MongoClient
 from fastapi import APIRouter
 from schemas import IngredientObject
-
+from typing import List
 MONGODB_URI = os.getenv("MONGODB_URI")
+client = MongoClient(MONGODB_URI, serverSelectionTimeoutMS=5000)
+
 router = APIRouter()
 
 db = client["PantryDB"]
@@ -14,7 +16,8 @@ fav_recipes = db["fav_recipes"]
 
 @router.post("/recipes")
 def add_recipe(Ingredients: List[IngredientObject], RecipeName: str, UserName: str, Email: str):
-    recipe = {"RecipeName": RecipeName, "UserName": UserName, "Email": Email, "Ingredients": Ingredients}
+    recipe = {"RecipeName": RecipeName, "UserName": UserName, "Email": Email, 
+              "Ingredients": [item.model_dump() for item in Ingredients]}
     result = recipes.insert_one(recipe)
 
 @router.delete("/recipes")
