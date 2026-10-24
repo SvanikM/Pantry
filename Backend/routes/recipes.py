@@ -28,7 +28,6 @@ fav_recipes.create_index(
     [
         ("UserName", 1),
         ("Email", 1),
-
     ]
 )
 '''
@@ -50,14 +49,27 @@ def add_recipe(Ingredients: List[IngredientObject], RecipeName: str, UserName: s
     except PyMongoError as err:
         return{
             "message": "MongoDB error",
-            "error": str(err)
+            "error": str(err) #typecasting error to a string so it fits in the json format
             }
     
 
 @router.delete("/recipes")
 def remove_recipe(RecipeName: str, UserName: str, Email: str):
     filter = {"RecipeName": RecipeName, "UserName": UserName, "Email": Email}
-    result = recipes.delete_one(filter)
+    try:
+        result = recipes.delete_one(filter)
+        if(result.deleted_count == 1):
+            return {"message": "Deleted Successfully"}
+        elif(result.deleted_count == 0):
+            return {"message": "Deletion failed"}
+        else:
+            return {"message": "Undefined, not sure what happened"}
+    except PyMongoError as err:
+        return{
+            "message": "MongoDB error",
+            "error": str(err)
+        }
+
 
 @router.get("/recipes")
 def get_recipe(RecipeName: str, UserName: str, Email: str):
