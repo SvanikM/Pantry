@@ -74,14 +74,16 @@ def remove_recipe(RecipeName: str, UserName: str, Email: str):
 @router.get("/recipes")
 def get_recipe(RecipeName: str, UserName: str, Email: str):
     filter = {"RecipeName": RecipeName, "UserName": UserName, "Email": Email}
-    result = recipes.find_one(filter)
-
-    if result is None:
-        return {"message": "Recipe not found"}
-    
-    #converting id so it can return as JSON
-    result["_id"] = str(result["_id"])
-    return result
+    try:
+        result = recipes.find_one(filter)
+        #converting id so it can return as JSON
+        result["_id"] = str(result["_id"])
+        return {"result": result}
+    except PyMongoError as err:
+        return{
+            "message": "MongoDB error",
+            "error": str(err)
+        }
 
 '''
 Recipes:
